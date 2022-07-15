@@ -1,0 +1,56 @@
+set up sign up component *
+set up log in component *
+link navbar to log and sign up 
+
+do lab 
+
+Setup routes
+Then setup up components for routes
+Filling out the basics
+Create a component that says its act
+Make 
+Set up api
+Set up database
+Put in authentication
+Test log in register routes
+
+
+Set up authentication system for register
+    This includes adding the registered user into the DATABASE 
+        by writing the registered method that was in the lab
+        I need to figure out the flow for it is it just
+            set up method
+            call method in routes
+            then add route to middleware?
+    And hashing the password using bycrypt
+
+we need to finish up my log in where registering on there puts it in the database
+
+
+
+We need to setup nutrition How?
+    similar to routes but user_id refrences the other one he did it using the username refrences where the username refrencing
+    gets it and makes it so that when it grabs the info from  
+    the whole point is to make a certain user associated with certain nutrition
+
+
+step by step is best
+    do it how they do it in labs but instead grab info from your nutritions table
+
+
+    July 14 9:14 on step 5 of lab finish lab by end of day working test after each implemented video
+    Tested stuff that works:
+        get request for auth/me 
+        can get token using auth/me
+        post request for auth/login
+        post request for auth/register
+        hashed password
+        /nutrition route works in insomnia
+
+
+
+For  Front end
+    using jastor figure out how he puts in data from frontend and takes it to the database from register
+    how he takes data from login to authenticate it
+    he will probably teach both in lab
+
