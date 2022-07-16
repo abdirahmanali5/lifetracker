@@ -1,131 +1,135 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useEffect, useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
+import apiClient from "./services/apiClient"
+import "./Register.css"
 
-function Copyright(props) {
+export default function Register({ user, setUser }) {
+  const navigate = useNavigate()
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  })
+
+  useEffect(() => {
+    // if user is already logged in,
+    // redirect them to the home page
+    if (user?.email) {
+      navigate("/")
+    }
+  }, [user, navigate])
+
+  const handleOnInputChange = (event) => {
+    if (event.target.name === "email") {
+      if (event.target.value.indexOf("@") === -1) {
+        setErrors((e) => ({ ...e, email: "Please enter a valid email." }))
+      } else {
+        setErrors((e) => ({ ...e, email: null }))
+      }
+    }
+
+    if (event.target.name === "passwordConfirm") {
+      if (event.target.value !== form.password) {
+        setErrors((e) => ({ ...e, passwordConfirm: "Passwords do not match." }))
+      } else {
+        setErrors((e) => ({ ...e, passwordConfirm: null }))
+      }
+    }
+
+    setForm((f) => ({ ...f, [event.target.name]: event.target.value }))
+  }
+
+  const handleOnSubmit = async () => {
+    setIsProcessing(true)
+    setErrors((e) => ({ ...e, form: null }))
+
+    if (form.passwordConfirm !== form.password) {
+      setErrors((e) => ({ ...e, passwordConfirm: "Passwords do not match." }))
+      setIsProcessing(false)
+      return
+    } else {
+      setErrors((e) => ({ ...e, passwordConfirm: null }))
+    }
+    const  {data,error} = await apiClient.signupUser({email:form.email,password: form.password})
+    if(error) setErrors((e)=> ({...e, form:error}))
+   
+    // // try {
+    // //   const res = await axios.post("http://localhost:3001/auth/register", {
+    // //     email: form.email,
+    // //     password: form.password,
+    // //   })
+    // //   if (res?.data?.user) {
+    // //     setUser(res.data.user)
+    // //   } else {
+    // //     setErrors((e) => ({ ...e, form: "Something went wrong with registration" }))
+    // //   }
+    // // } catch (err) {
+    //   console.log(err)
+    //   const message = err?.response?.data?.error?.message
+    //   setErrors((e) => ({ ...e, form: message ?? String(err) }))
+    // } finally {
+    //   setIsProcessing(false)
+    // }
+  }
+
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+    <div className="Signup">
+      <div className="card">
+        <h2>Create Account</h2>
 
-const theme = createTheme();
+        {errors.form && <span className="error">{errors.form}</span>}
+        <br />
 
-export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+        <div className="form">
+          <div className="input-field">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter a valid email"
+              value={form.email}
+              onChange={handleOnInputChange}
+            />
+            {errors.email && <span className="error">{errors.email}</span>}
+          </div>
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign up
-          </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-        <Copyright sx={{ mt: 5 }} />
-      </Container>
-    </ThemeProvider>
-  );
+          <div className="input-field">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter a secure password"
+              value={form.password}
+              onChange={handleOnInputChange}
+            />
+            {errors.password && <span className="error">{errors.password}</span>}
+          </div>
+
+          <div className="input-field">
+            <label htmlFor="passwordConfirm">Confirm Password</label>
+            <input
+              type="password"
+              name="passwordConfirm"
+              placeholder="Confirm your password"
+              value={form.passwordConfirm}
+              onChange={handleOnInputChange}
+            />
+            {errors.passwordConfirm && <span className="error">{errors.passwordConfirm}</span>}
+          </div>
+
+          <button className="btn" disabled={isProcessing} onClick={handleOnSubmit}>
+            {isProcessing ? "Loading..." : "Create Account"}
+          </button>
+        </div>
+
+        <div className="footer">
+          <p>
+            Already have an account? Login <Link to="/login">here</Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }

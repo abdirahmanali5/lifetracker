@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import SignUp from './register';
-import SignIn from './log-in';
+import SignIn from './Login/log-in';
 import AppRouter from './AppRouter';
 
 
@@ -156,9 +156,12 @@ const Navbar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
+                  // <a href={`http://localhost:3000/${pages}`} target="_blank" rel="noreferrer" >
+            
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
+                // </a>
               ))}
             </Menu>
           </Box>
