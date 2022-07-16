@@ -28,22 +28,33 @@ class nutrition {
             )
             return results.rows[0]
     }
+
     static async fetchPostbyId(postId) {
-        const results = await   db.query(
+
+        console.log(postId)
+
+        let id = postId.user.postId;
+
+        id = parseInt(id)
+
+        console.log(id)
+
+        const results = await db.query(
             `
-                SELECT p.id                
+                SELECT p.id,              
                        p.name,
                        p.category,
                        p.calories,
                        p.image,
                        p.users_id AS userId,
                        p.created_at AS "createdAt"
-                       FROM  nutrition AS p
-                       JOIN users AS u ON u.id = p.users_id
-                       WHERE p.id = $1
+                FROM  nutrition AS p
+                JOIN users AS u ON u.id = p.users_id
+                WHERE p.id = $1;
             
-            `, [postId]
+            `, [id]
         )
+        console.log("line 51")
 
             const post1 =  results.rows[0]
 
@@ -52,6 +63,7 @@ class nutrition {
             }
             return post1
     }
+
     static async editPost({postId, postUpdate}){
         if (!Post || !user){   
             throw new BadRequestError("Post or user missing");
@@ -78,7 +90,28 @@ class nutrition {
                 `,[postUpdate.category, postId]
             )
             return results.rows[0]
+    }
 
+    static async listPosts() {
+        console.log("96)")
+        const results = await db.query(
+            `
+                SELECT p.id,              
+                       p.name,
+                       p.category,
+                       p.calories,
+                       p.image,
+                       p.users_id AS userId,
+                       p.created_at AS "createdAt"
+                FROM  nutrition AS p
+                JOIN users AS u ON u.id = p.users_id
+                ORDER BY p.created_at DESC;
+            
+            `, 
+        )
+        console.log("112")
+        console.log("resulst",results.rows[0])
+        return results.rows[0]
 
     }
    
