@@ -2,15 +2,18 @@ import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import apiClient from "./services/apiClient"
 import "./Register.css"
-
+import axios from "axios"
 export default function Register({ user, setUser }) {
   const navigate = useNavigate()
   const [isProcessing, setIsProcessing] = useState(false)
   const [errors, setErrors] = useState({})
   const [form, setForm] = useState({
+    first_name:"",
+    last_name:"",
     email: "",
     password: "",
     passwordConfirm: "",
+    username:"",
   })
 
   useEffect(() => {
@@ -23,6 +26,7 @@ export default function Register({ user, setUser }) {
 
   const handleOnInputChange = (event) => {
     if (event.target.name === "email") {
+      console.log("email:",event.target.name)
       if (event.target.value.indexOf("@") === -1) {
         setErrors((e) => ({ ...e, email: "Please enter a valid email." }))
       } else {
@@ -52,26 +56,31 @@ export default function Register({ user, setUser }) {
     } else {
       setErrors((e) => ({ ...e, passwordConfirm: null }))
     }
-    const  {data,error} = await apiClient.signupUser({email:form.email,password: form.password})
-    if(error) setErrors((e)=> ({...e, form:error}))
+    console.log("email in register:",form.email)
+    // const  {data,error} = await apiClient.signupUser({email:form.email,password: form.password})
+    // if(error) setErrors((e)=> ({...e, form:error}))
    
-    // // try {
-    // //   const res = await axios.post("http://localhost:3001/auth/register", {
-    // //     email: form.email,
-    // //     password: form.password,
-    // //   })
-    // //   if (res?.data?.user) {
-    // //     setUser(res.data.user)
-    // //   } else {
-    // //     setErrors((e) => ({ ...e, form: "Something went wrong with registration" }))
-    // //   }
-    // // } catch (err) {
-    //   console.log(err)
-    //   const message = err?.response?.data?.error?.message
-    //   setErrors((e) => ({ ...e, form: message ?? String(err) }))
-    // } finally {
-    //   setIsProcessing(false)
-    // }
+    try {
+      const res = await axios.post("http://localhost:3001/auth/register", {
+        email: form.email,
+        password: form.password,
+        first_name: form.first_name,
+        last_name: form.last_name,
+        username: form.username
+      })
+      if (res?.data?.user) {
+        setUser(res.data.user)
+        console.log("line67")
+      } else {
+        setErrors((e) => ({ ...e, form: "Something went wrong with registration" }))
+      }
+    } catch (err) {
+      console.log(err)
+      const message = err?.response?.data?.error?.message
+      setErrors((e) => ({ ...e, form: message ?? String(err) }))
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -94,7 +103,42 @@ export default function Register({ user, setUser }) {
             />
             {errors.email && <span className="error">{errors.email}</span>}
           </div>
+        
+           <div className="input-field">
+            <label htmlFor="First Name">First Name</label>
+            <input
+              type="first_name"
+              name="first_name"
+              placeholder="Enter your first name"
+              value={form.first_name}
+              onChange={handleOnInputChange}
+            />
+            {errors.email && <span className="error">{errors.email}</span>}
+          </div>
 
+          <div className="input-field">
+            <label htmlFor="First Name">Last Name</label>
+            <input
+              type="last_name"
+              name="last_name"
+              placeholder="Enter your last name"
+              value={form.last_name}
+              onChange={handleOnInputChange}
+            />
+            {errors.email && <span className="error">{errors.email}</span>}
+          </div> 
+
+          <div className="input-field">
+            <label htmlFor="Username">Username</label>
+            <input
+              type="username"
+              name="username"
+              placeholder="Enter your username"
+              value={form.username}
+              onChange={handleOnInputChange}
+            />
+            {errors.email && <span className="error">{errors.email}</span>}
+          </div>
           <div className="input-field">
             <label htmlFor="password">Password</label>
             <input
@@ -119,7 +163,7 @@ export default function Register({ user, setUser }) {
             {errors.passwordConfirm && <span className="error">{errors.passwordConfirm}</span>}
           </div>
 
-          <button className="btn" disabled={isProcessing} onClick={handleOnSubmit}>
+          <button className="btn" onClick={handleOnSubmit}>
             {isProcessing ? "Loading..." : "Create Account"}
           </button>
         </div>
@@ -132,4 +176,4 @@ export default function Register({ user, setUser }) {
       </div>
     </div>
   )
-}
+  }

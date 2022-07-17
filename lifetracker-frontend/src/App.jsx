@@ -72,8 +72,8 @@ return (
       <main>
       <Navbar count = {count}  setCount = {setCount} setUser = {setUser} user = {user} posts = {posts} setPosts = {setPosts} Error = {Error}  setError = {setError} isFetching = {isFetching} setIsFetching = {setIsFetching} ></Navbar>
       <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/register" element={<SignUp />} />
+      <Route path="/" setUser = {setUser} user = {user} element={<Home />} />
+      <Route path="/register" element={<SignUp setUser = {setUser} user = {user}  />} />
       <Route path="/log-in" element={<SignIn />} />
    
       </Routes>

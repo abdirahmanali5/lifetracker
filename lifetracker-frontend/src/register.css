@@ -54,7 +54,7 @@
   .Signup .card .form .btn {
     width: 100%;
     height: 70px;
-    color: white;
+    color: rgb(173, 68, 68);
     font-size: 20px;
     display: flex;
     align-items: center;
@@ -73,5 +73,6 @@
     height: 100px;
     width: 100%;
   }
+  
 
   
